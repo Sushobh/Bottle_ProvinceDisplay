@@ -1,6 +1,6 @@
 package com.ranrings.statedisplay.models
 
-class ProvinceListGetter (var countryCode : String){
+class ProvinceListApi (var countryCode : String){
 
     public interface ProvinceListListener {
         fun onFetched(data : ProvinceListResponse)

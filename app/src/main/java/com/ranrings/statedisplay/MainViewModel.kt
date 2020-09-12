@@ -4,13 +4,13 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ranrings.statedisplay.models.Province
-import com.ranrings.statedisplay.models.ProvinceListGetter
+import com.ranrings.statedisplay.models.ProvinceListApi
 import com.ranrings.statedisplay.models.ProvinceListResponse
 
 class MainViewModel(private val countryCode : String,var  context : Context) : ViewModel(){
 
      val provinceListLiveData = MutableLiveData<List<Province>>(listOf())
-     val provinceListGetter = ProvinceListGetter(countryCode)
+     val provinceListApi = ProvinceListApi(countryCode)
      val progressBarDisplayLiveData = MutableLiveData<Boolean>(false)
 
      init {
@@ -19,7 +19,7 @@ class MainViewModel(private val countryCode : String,var  context : Context) : V
 
      fun callApi() {
           progressBarDisplayLiveData.value = true
-          provinceListGetter.call(object : ProvinceListGetter.ProvinceListListener {
+          provinceListApi.call(object : ProvinceListApi.ProvinceListListener {
                override fun onFetched(data: ProvinceListResponse) {
                     provinceListLiveData.postValue(data.provinces)
                     progressBarDisplayLiveData.postValue(false)
