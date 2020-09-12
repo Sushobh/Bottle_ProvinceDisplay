@@ -27,6 +27,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
+
+
         recycler_view.layoutManager = (LinearLayoutManager(this))
         recycler_view.adapter = adapter
 
@@ -41,6 +43,8 @@ class MainActivity : AppCompatActivity() {
                  adapter.notifyDataSetChanged()
              }
          })
+
+        viewModel.onCreate()
 
         viewModel.progressBarDisplayLiveData.observe(this, Observer {
             if(it != null) {
