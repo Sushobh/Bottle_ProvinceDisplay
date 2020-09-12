@@ -11,30 +11,28 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ranrings.statedisplay.models.Province
-import com.ranrings.statedisplay.others.MyViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.named
+
 
 class MainActivity : AppCompatActivity() {
 
-    val stateId = "India"
+    val countryCode = "USA"
     val provinceList : ArrayList<Province> = arrayListOf()
     val adapter = ProvinceListAdapter(provinceList)
 
-    lateinit var viewModel : MainViewModel
+    val mainViewModel : MainViewModel by viewModel(clazz = MainViewModel::class) { parametersOf(countryCode) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         recycler_view.layoutManager = (LinearLayoutManager(this))
         recycler_view.adapter = adapter
 
-
-        viewModel = ViewModelProvider(this,
-            MyViewModelFactory(stateId, this)
-        ).get(MainViewModel::class.java)
-        viewModel.provinceListLiveData.observe(this , Observer {
+        mainViewModel.provinceListLiveData.observe(this , Observer {
              if(it != null){
                  provinceList.clear()
                  provinceList.addAll(it)
@@ -42,7 +40,7 @@ class MainActivity : AppCompatActivity() {
              }
          })
 
-        viewModel.progressBarDisplayLiveData.observe(this, Observer {
+        mainViewModel.progressBarDisplayLiveData.observe(this, Observer {
             if(it != null) {
                 if(it){
                     progress_bar.visibility = View.VISIBLE
@@ -58,8 +56,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         class ProvinceListAdapter(val provinceList : List<Province>) : RecyclerView.Adapter<ProvinceListAdapter.MyViewHolder>() {
-
-
 
             class MyViewHolder(var textView : TextView) : RecyclerView.ViewHolder(textView)
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {

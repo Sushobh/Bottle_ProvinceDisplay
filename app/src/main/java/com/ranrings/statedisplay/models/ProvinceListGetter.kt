@@ -1,47 +1,46 @@
 package com.ranrings.statedisplay.models
 
-class ProvinceListGetter (var countryCode : String){
+import kotlinx.coroutines.delay
+import java.lang.Exception
 
-    public interface ProvinceListListener {
-        fun onFetched(data : ProvinceListResponse)
-        fun onError(message : String)
-    }
+class ProvinceListGetter : ProvinceListApi{
 
 
-    fun call(listener : ProvinceListListener){
-        val thread = Thread(Runnable {
-            Thread.sleep(3000)
-            when(countryCode){
-                "India" -> {
-                    listener.onFetched(ProvinceListResponse(listOf(
-                        Province("Karnataka"),
-                        Province("Maharashtra"),
-                        Province("Delhi")
 
-                    ), "asdakjdad"))
-                }
+    override suspend fun getProvincesList(countryCode : String): ProvinceListResponse {
 
-                "USA" -> {
-                    listener.onFetched(ProvinceListResponse(listOf(
-                        Province("New York"),
-                        Province("Texas"),
-                        Province("California")
+        delay(3000)
+        when(countryCode){
+            "India" -> {
+                return ProvinceListResponse(listOf(
+                    Province("Karnataka"),
+                    Province("Maharashtra"),
+                    Province("Delhi")
 
-                    ), "asdakjdad"))
-                }
-
-                "Pakistan" -> {
-                    listener.onFetched(ProvinceListResponse(listOf(
-                        Province("Punjab"),
-                        Province("Sindh"),
-                        Province("Balochistan")
-
-                    ), "asdakjdad"))
-                }
-
+                ), "asdakjdad")
             }
-        })
-        thread.start()
+
+            "USA" -> {
+                return ProvinceListResponse(listOf(
+                    Province("New York"),
+                    Province("Texas"),
+                    Province("California")
+
+                ), "asdakjdad")
+            }
+
+            "Pakistan" -> {
+                return ProvinceListResponse(listOf(
+                    Province("Punjab"),
+                    Province("Sindh"),
+                    Province("Balochistan")
+
+                ), "asdakjdad")
+            }
+
+        }
+
+        throw Exception("Invalid country code")
     }
 
 }

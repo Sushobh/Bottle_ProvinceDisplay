@@ -1,37 +1,40 @@
 package com.ranrings.statedisplay
 
-import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ranrings.statedisplay.models.Province
-import com.ranrings.statedisplay.models.ProvinceListGetter
-import com.ranrings.statedisplay.models.ProvinceListResponse
+import com.ranrings.statedisplay.models.ProvinceListApi
+import com.ranrings.statedisplay.others.AppController
+import kotlinx.coroutines.launch
+import java.lang.Exception
 
-class MainViewModel(private val countryCode : String,var  context : Context) : ViewModel(){
+class MainViewModel(private val countryCode : String,
+                    private val provinceListApi: ProvinceListApi,
+                    private val appController: AppController) : ViewModel(){
 
      val provinceListLiveData = MutableLiveData<List<Province>>(listOf())
-     val provinceListGetter = ProvinceListGetter(countryCode)
      val progressBarDisplayLiveData = MutableLiveData<Boolean>(false)
 
      init {
-          callApi()
+          viewModelScope.launch {
+               callApi()
+          }
      }
 
-     fun callApi() {
-          progressBarDisplayLiveData.value = true
-          provinceListGetter.call(object : ProvinceListGetter.ProvinceListListener {
-               override fun onFetched(data: ProvinceListResponse) {
-                    provinceListLiveData.postValue(data.provinces)
-                    progressBarDisplayLiveData.postValue(false)
-               }
-
-               override fun onError(message: String) {
-                    AppUtils.showToast(message,context)
-                    progressBarDisplayLiveData.postValue(false)
-               }
-
-          })
-
+     suspend fun callApi() {
+          try {
+               progressBarDisplayLiveData.value = true
+               val data = provinceListApi.getProvincesList(countryCode)
+               provinceListLiveData.postValue(data.provinces)
+               appController.saveToken(data.token)
+          }
+          catch (e : Exception) {
+               e.message?.let { appController.showToast(it) }
+          }
+          finally {
+               progressBarDisplayLiveData.postValue(false)
+          }
      }
 
 }
