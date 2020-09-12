@@ -17,12 +17,16 @@ class MainViewModel(private val countryCode : String,
      val progressBarDisplayLiveData = MutableLiveData<Boolean>(false)
 
      init {
+
+     }
+
+     fun onCreate() {
           viewModelScope.launch {
                callApi()
           }
      }
 
-     suspend fun callApi() {
+     private suspend fun callApi() {
           try {
                progressBarDisplayLiveData.value = true
                val data = provinceListApi.getProvincesList(countryCode)
