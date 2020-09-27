@@ -36,4 +36,17 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
 
+
+    def koin_version= "2.1.6"
+    implementation "org.koin:koin-androidx-scope:$koin_version"
+    implementation "org.koin:koin-androidx-viewmodel:$koin_version"
+    implementation "org.koin:koin-androidx-fragment:$koin_version"
+
+
+    // https://mvnrepository.com/artifact/org.junit/junit5-engine
+    compile group: 'org.junit', name: 'junit5-engine', version: '5.0.0-ALPHA'
+
+    implementation 'org.mockito:mockito-core:3.5.13'
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+
 }

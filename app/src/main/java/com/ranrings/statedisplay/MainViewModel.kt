@@ -1,46 +1,60 @@
 package com.ranrings.statedisplay
 
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ranrings.statedisplay.models.Province
 import com.ranrings.statedisplay.models.ProvinceListApi
-import com.ranrings.statedisplay.models.ProvinceListResponse
-import com.ranrings.statedisplay.others.SharedPreferencesManager
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.lang.Exception
 
-class MainViewModel(private val countryCode : String,var  context : Context) : ViewModel(){
+class MainViewModel(private val countryCode : String,
+                    private val provinceListApi: ProvinceListApi,
+                    private val appFrontend: AppFrontend
+                    ) : ViewModel(){
 
      val provinceListLiveData = MutableLiveData<List<Province>>(listOf())
-     val provinceListApi = ProvinceListApi(countryCode)
      val progressBarDisplayLiveData = MutableLiveData<Boolean>(false)
 
 
      fun onCreate() {
-          viewModelScope.launch {
-               callApi()
-          }
+         viewModelScope.launch {
+              callApi()
+         }
      }
 
+//
+//     suspend fun callApi() {
+//          try
+//          {
+//               progressBarDisplayLiveData.value = true
+//               val data = provinceListApi.getProvinceList(countryCode)
+//               provinceListLiveData.postValue(data.provinces)
+//               appFrontend.saveData("token",data.token)
+//          }
+//          catch (e : Exception){
+//               e.message?.let { appFrontend.showToast(it) }
+//          }
+//          finally {
+//               progressBarDisplayLiveData.postValue(false)
+//          }
+//
+//     }
 
-     fun callApi() {
-          progressBarDisplayLiveData.value = true
-          provinceListApi.call(object : ProvinceListApi.ProvinceListListener {
-               override fun onFetched(data: ProvinceListResponse) {
-                    provinceListLiveData.postValue(data.provinces)
-                    progressBarDisplayLiveData.postValue(false)
-                    SharedPreferencesManager.saveToken(data.token)
-               }
 
-               override fun onError(message: String) {
-                    AppUtils.showToast(message,context)
-                    progressBarDisplayLiveData.postValue(false)
-               }
-
-          })
-
-     }
+    suspend fun callApi() {
+           try {
+               progressBarDisplayLiveData.value = true
+               val response = provinceListApi.getProvinceList("1")
+               provinceListLiveData.postValue(response.provinces)
+           }
+           catch (e : Exception){
+               appFrontend.showToast("Something went wrong")
+           }
+         finally {
+             progressBarDisplayLiveData.value = false
+         }
+    }
 
 }
