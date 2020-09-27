@@ -24,23 +24,6 @@ class MainViewModel(private val countryCode : String,
          }
      }
 
-//
-//     suspend fun callApi() {
-//          try
-//          {
-//               progressBarDisplayLiveData.value = true
-//               val data = provinceListApi.getProvinceList(countryCode)
-//               provinceListLiveData.postValue(data.provinces)
-//               appFrontend.saveData("token",data.token)
-//          }
-//          catch (e : Exception){
-//               e.message?.let { appFrontend.showToast(it) }
-//          }
-//          finally {
-//               progressBarDisplayLiveData.postValue(false)
-//          }
-//
-//     }
 
 
     suspend fun callApi() {
