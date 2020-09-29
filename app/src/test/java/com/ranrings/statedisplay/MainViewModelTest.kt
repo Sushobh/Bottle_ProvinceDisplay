@@ -6,13 +6,12 @@ import com.ranrings.statedisplay.models.Province
 import com.ranrings.statedisplay.models.ProvinceListApi
 import com.ranrings.statedisplay.models.ProvinceListGetter
 import com.ranrings.statedisplay.models.ProvinceListResponse
+import junit.framework.Assert.assertNotNull
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.gen5.api.Assertions
-import org.junit.gen5.api.BeforeEach
-import org.junit.gen5.api.DisplayName
 import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.Mockito
@@ -49,27 +48,25 @@ internal class MainViewModelTest {
     }
 
 
-    @DisplayName("Check that all mocks are initialized")
     @Test
     fun test1(){
-        Assertions.assertNotNull(appFrontend)
-        Assertions.assertNotNull(provinceListApi)
+        Assert.assertNotNull(appFrontend)
+        Assert.assertNotNull(provinceListApi)
     }
 
 
 
-    @DisplayName("Check that when api returns a valid response, live data is updated")
     @Test
     fun callApiTest() = runBlocking{
         val mockResponse = Mockito.mock(ProvinceListResponse::class.java)
         mockResponse.provinces = Mockito.mock(List::class.java) as List<Province>
         Mockito.`when`(provinceListApi.getProvinceList(countryCode)).thenReturn(mockResponse)
         mainViewModel.callApi()
-        Assertions.assertEquals(mockResponse.provinces,mainViewModel.provinceListLiveData.value)
-        Assertions.assertEquals(false,mainViewModel.progressBarDisplayLiveData.value)
+        Assert.assertEquals(mockResponse.provinces,mainViewModel.provinceListLiveData.value)
+        Assert.assertEquals(false,mainViewModel.progressBarDisplayLiveData.value)
     }
 
-    @DisplayName("Check that when api throws an error a toast is shown")
+
     @Test
     fun test2() = runBlocking{
         Mockito.doAnswer(Answer {
@@ -77,7 +74,7 @@ internal class MainViewModelTest {
         }).`when`(provinceListApi).getProvinceList(Mockito.anyString())
         mainViewModel.callApi()
         Mockito.verify(appFrontend,Mockito.times(1)).showToast("Something went wrong")
-        Assertions.assertEquals(false,mainViewModel.progressBarDisplayLiveData.value)
+        Assert.assertEquals(false,mainViewModel.progressBarDisplayLiveData.value)
     }
 
 
